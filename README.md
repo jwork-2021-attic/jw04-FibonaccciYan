@@ -26,7 +26,7 @@
 
 请新建`maze`分支，并在该分支上实现迷宫生成算法，然后实现葫芦娃走迷宫（可以用算法指挥葫芦娃走出迷宫，或手工操作键盘指挥葫芦娃走迷宫）
 
-迷宫生成算法可直接用https://github.com/oppenheimj/maze-generator。
+迷宫生成算法可直接用 https://github.com/oppenheimj/maze-generator 。
 
 >切记，本课程作业的重点不是算法实现，而是正确写出面向对象风格的代码。
 
