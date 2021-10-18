@@ -1,23 +1,14 @@
-package com.anish.calabashbros;
+package com.anish.monsters;
 
 public class BubbleSorter<T extends Comparable<T>> implements Sorter<T> {
 
     private T[] a;
+    private String plan = "";
 
     @Override
     public void load(T[] a) {
         this.a = a;
     }
-
-    private void swap(int i, int j) {
-        T temp;
-        temp = a[i];
-        a[i] = a[j];
-        a[j] = temp;
-        plan += "" + a[i] + "<->" + a[j] + "\n";
-    }
-
-    private String plan = "";
 
     @Override
     public void sort() {
@@ -31,6 +22,14 @@ public class BubbleSorter<T extends Comparable<T>> implements Sorter<T> {
                 }
             }
         }
+    }
+
+    private void swap(int i, int j) {
+        T temp;
+        temp = a[i];
+        a[i] = a[j];
+        a[j] = temp;
+        plan += "" + a[i] + "<->" + a[j] + "\n";
     }
 
     @Override

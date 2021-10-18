@@ -2,60 +2,87 @@ package com.anish.screen;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
+import java.util.Comparator;
 
-import com.anish.calabashbros.BubbleSorter;
-import com.anish.calabashbros.Calabash;
-import com.anish.calabashbros.World;
+import com.anish.monsters.QuickSorter;
+import com.anish.monsters.Monster;
+import com.anish.monsters.World;
 
 import asciiPanel.AsciiPanel;
 
 public class WorldScreen implements Screen {
 
     private World world;
-    private Calabash[] bros;
+    private Monster[] monsters;
     String[] sortSteps;
 
     public WorldScreen() {
         world = new World();
 
-        bros = new Calabash[7];
+        monsters = new Monster[256];
+        Integer[] rand = new Integer[256];
 
-        bros[3] = new Calabash(new Color(204, 0, 0), 1, world);
-        bros[5] = new Calabash(new Color(255, 165, 0), 2, world);
-        bros[1] = new Calabash(new Color(252, 233, 79), 3, world);
-        bros[0] = new Calabash(new Color(78, 154, 6), 4, world);
-        bros[4] = new Calabash(new Color(50, 175, 255), 5, world);
-        bros[6] = new Calabash(new Color(114, 159, 207), 6, world);
-        bros[2] = new Calabash(new Color(173, 127, 168), 7, world);
+        for(int i = 0; i < 256; i++){
+            rand[i] = i;
+        }
+        Comparator<Integer> cmp = new MyComparator();
+        Arrays.sort(rand, cmp);
+        
+        for (int i = 0; i < 256; i++) {
+            int r = 0, b = 0, g = 0;
+            if (i < (double) 256 / 3) {
+                r = 255;
+                g = (int) Math.ceil(255 * 3 * i / 256);
+                b = 0;
+            } else if (i < (double) 256 / 2) {
+                r = (int) Math.ceil(750 - i * 250 * 6 / 256);
+                g = 255;
+                b = 0;
+            } else if (i < (double) 256 * 2 / 3) {
+                r = 0;
+                g = 255;
+                b = (int) Math.ceil(i * 250 * 6 / 256 - 750);
+            } else if (i < (double) 256 * 5 / 6) {
+                r = 0;
+                g = (int) Math.ceil(1250 - i * 250 * 6 / 256);
+                b = 255;
+            } else {
+                r = (int) Math.ceil(150 * i * 6 / 256 - 750);
+                g = 0;
+                b = 255;
+            }
+            monsters[rand[i]] = new Monster(new Color(r, g, b), i, world);
+            world.put(monsters[rand[i]], 2 * (rand[i] % 16) + 8, 2 * (rand[i] / 16) + 8);
+        }
 
-        world.put(bros[0], 10, 10);
-        world.put(bros[1], 12, 10);
-        world.put(bros[2], 14, 10);
-        world.put(bros[3], 16, 10);
-        world.put(bros[4], 18, 10);
-        world.put(bros[5], 20, 10);
-        world.put(bros[6], 22, 10);
-
-        BubbleSorter<Calabash> b = new BubbleSorter<>();
-        b.load(bros);
-        b.sort();
-
-        sortSteps = this.parsePlan(b.getPlan());
+        QuickSorter<Monster> q = new QuickSorter<>();
+        q.load(monsters);
+        q.sort();
+         
+        sortSteps = this.parsePlan(q.getPlan());
     }
+
+    static class MyComparator implements Comparator<Integer> {
+        @Override
+        public int compare(Integer o1, Integer o2) {
+            return Math.random() < 0.5 ? 1 : -1;
+        }
+    }    
 
     private String[] parsePlan(String plan) {
         return plan.split("\n");
     }
 
-    private void execute(Calabash[] bros, String step) {
+    private void execute(Monster[] monsters, String step) {
         String[] couple = step.split("<->");
-        getBroByRank(bros, Integer.parseInt(couple[0])).swap(getBroByRank(bros, Integer.parseInt(couple[1])));
+        getBroByRank(monsters, Integer.parseInt(couple[0])).swap(getBroByRank(monsters, Integer.parseInt(couple[1])));
     }
 
-    private Calabash getBroByRank(Calabash[] bros, int rank) {
-        for (Calabash bro : bros) {
-            if (bro.getRank() == rank) {
-                return bro;
+    private Monster getBroByRank(Monster[] monsters, int rank) {
+        for (Monster mon : monsters) {
+            if (mon.getRank() == rank) {
+                return mon;
             }
         }
         return null;
@@ -79,7 +106,7 @@ public class WorldScreen implements Screen {
     public Screen respondToUserInput(KeyEvent key) {
 
         if (i < this.sortSteps.length) {
-            this.execute(bros, sortSteps[i]);
+            this.execute(monsters, sortSteps[i]);
             i++;
         }
 
