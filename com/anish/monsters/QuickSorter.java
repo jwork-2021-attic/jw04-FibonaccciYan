@@ -2,17 +2,17 @@ package com.anish.monsters;
 
 public class QuickSorter<T extends Comparable<T>> implements Sorter<T> {
 
-    private T[] a;
+    private T[][] elements;
     private String plan = "";
 
     @Override
-    public void load(T[] a) {
-        this.a = a;
+    public void load(T[][] a) {
+        this.elements = a;
     }
 
     @Override
     public void sort() {
-        int n = a.length;
+        int n = elements.length * elements[0].length;
         quickSort(0, n - 1);
     }
 
@@ -27,10 +27,10 @@ public class QuickSorter<T extends Comparable<T>> implements Sorter<T> {
     }
 
     private int partition(int begin, int end) {
-        T pivot = a[end];
+        T pivot = elements[end%16][end/16];
         int i = begin;
         for (int j = begin; j < end; ++j) {
-            if (a[j].compareTo(pivot) < 0) {
+            if (elements[j%16][j/16].compareTo(pivot) < 0) {
                 if (i == j) {
                     ++i;
                 } else {
@@ -44,10 +44,10 @@ public class QuickSorter<T extends Comparable<T>> implements Sorter<T> {
     }
 
     public void swap(int i, int j) {
-        T temp = a[i];
-        a[i] = a[j];
-        a[j] = temp;
-        plan += "" + a[i] + "<->" + a[j] + "\n";
+        T temp = elements[i%16][i/16];
+        elements[i%16][i/16] = elements[j%16][j/16];
+        elements[j%16][j/16] = temp;
+        plan += "" + elements[i%16][i/16] + "<->" + elements[j%16][j/16] + "\n";
     }
 
     @Override

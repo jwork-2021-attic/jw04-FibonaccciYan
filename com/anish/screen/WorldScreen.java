@@ -14,13 +14,13 @@ import asciiPanel.AsciiPanel;
 public class WorldScreen implements Screen {
 
     private World world;
-    private Monster[] monsters;
+    private Monster[][] monsters;
     String[] sortSteps;
 
     public WorldScreen() {
         world = new World();
 
-        monsters = new Monster[256];
+        monsters = new Monster[16][16];
         Integer[] rand = new Integer[256];
 
         for(int i = 0; i < 256; i++){
@@ -52,8 +52,8 @@ public class WorldScreen implements Screen {
                 g = 0;
                 b = 255;
             }
-            monsters[rand[i]] = new Monster(new Color(r, g, b), i, world);
-            world.put(monsters[rand[i]], 2 * (rand[i] % 16) + 8, 2 * (rand[i] / 16) + 8);
+            monsters[rand[i]%16][rand[i]/16] = new Monster(new Color(r, g, b), i, world);
+            world.put(monsters[rand[i]%16][rand[i]/16], 2 * (rand[i]%16) + 8, 2 * (rand[i]/16) + 8);
         }
 
         QuickSorter<Monster> q = new QuickSorter<>();
@@ -74,15 +74,16 @@ public class WorldScreen implements Screen {
         return plan.split("\n");
     }
 
-    private void execute(Monster[] monsters, String step) {
+    private void execute(Monster[][] monsters, String step) {
         String[] couple = step.split("<->");
         getBroByRank(monsters, Integer.parseInt(couple[0])).swap(getBroByRank(monsters, Integer.parseInt(couple[1])));
     }
 
-    private Monster getBroByRank(Monster[] monsters, int rank) {
-        for (Monster mon : monsters) {
-            if (mon.getRank() == rank) {
-                return mon;
+    private Monster getBroByRank(Monster[][] monsters, int rank) {
+        int len = monsters.length * monsters[0].length;
+        for (int i = 0; i < len; i++) {
+            if (monsters[i%16][i/16].getRank() == rank) {
+                return monsters[i%16][i/16];
             }
         }
         return null;
@@ -90,12 +91,9 @@ public class WorldScreen implements Screen {
 
     @Override
     public void displayOutput(AsciiPanel terminal) {
-
         for (int x = 0; x < World.WIDTH; x++) {
             for (int y = 0; y < World.HEIGHT; y++) {
-
                 terminal.write(world.get(x, y).getGlyph(), x, y, world.get(x, y).getColor());
-
             }
         }
     }
@@ -104,12 +102,10 @@ public class WorldScreen implements Screen {
 
     @Override
     public Screen respondToUserInput(KeyEvent key) {
-
         if (i < this.sortSteps.length) {
             this.execute(monsters, sortSteps[i]);
             i++;
         }
-
         return this;
     }
 
