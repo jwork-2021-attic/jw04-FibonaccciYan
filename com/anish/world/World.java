@@ -2,8 +2,8 @@ package com.anish.world;
 
 public class World {
 
-    public static final int WIDTH = 48;
-    public static final int HEIGHT = 48;
+    public static final int WIDTH = 30;
+    public static final int HEIGHT = 30;
 
     private Tile<Thing>[][] tiles;
 
@@ -29,4 +29,7 @@ public class World {
         this.tiles[x][y].setThing(t);
     }
 
+    public void remove(int x, int y){
+        this.tiles[x][y].setThing(new Floor(this));
+    }
 }

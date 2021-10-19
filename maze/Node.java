@@ -1,3 +1,5 @@
+package maze;
+
 public class Node {
     public final int x;
     public final int y;

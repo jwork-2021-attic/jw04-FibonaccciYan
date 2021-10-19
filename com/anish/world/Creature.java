@@ -8,7 +8,8 @@ public class Creature extends Thing {
         super(color, glyph, world);
     }
 
-    public void moveTo(int xPos, int yPos) {
+    public void moveTo(int pxPos, int pyPos, int xPos, int yPos) {
+        this.world.remove(pxPos, pyPos);
         this.world.put(this, xPos, yPos);
     }
 

@@ -2,34 +2,30 @@ package com.anish.world;
 
 import java.awt.Color;
 
-public class Player extends Creature implements Comparable<Player> {
+public class Player extends Creature{
 
-    private int rank;
+    private int xPos;
+    private int yPos;
 
-    public Player(Color color, int rank, World world) {
+    public Player(Color color, World world, int xPos, int yPos) {
         super(color, (char) 2, world);
-        this.rank = rank;
+        this.xPos = xPos;
+        this.yPos = yPos;
     }
 
-    public int getRank() {
-        return this.rank;
+    public int getxPos(){
+        return xPos;
     }
 
-    @Override
-    public String toString() {
-        return String.valueOf(this.rank);
+    public int getyPos(){
+        return yPos;
     }
 
-    @Override
-    public int compareTo(Player o) {
-        return Integer.valueOf(this.rank).compareTo(Integer.valueOf(o.rank));
+    public void setxPos(int xPos){
+        this.xPos = xPos;
     }
 
-    public void swap(Player another) {
-        int x = this.getX();
-        int y = this.getY();
-        this.moveTo(another.getX(), another.getY());
-        another.moveTo(x, y);
+    public void setyPos(int yPos){
+        this.yPos = yPos;
     }
-
 }
