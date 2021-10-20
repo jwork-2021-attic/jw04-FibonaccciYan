@@ -10,10 +10,11 @@ import com.anish.world.Wall;
 import asciiPanel.AsciiPanel;
 
 import maze.MazeGenerator;
+import AStar.AStarAlgorithm;
 
 public class WorldScreen implements Screen {
 
-    public static final int SIZE = 30;
+    public static final int SIZE = 40;
 
     private World world;
     private Player player;
@@ -37,6 +38,9 @@ public class WorldScreen implements Screen {
             }
         }
         
+        AStarAlgorithm aStar = new AStarAlgorithm();
+        aStar.findPath(maze, player.getxPos(), player.getyPos(), SIZE - 1, SIZE - 1);
+        mazeSteps = this.parsePlan(aStar.getPlan());
     } 
 
     private boolean isValidMove(int xPos, int yPos){
@@ -46,13 +50,18 @@ public class WorldScreen implements Screen {
         return false;
     }
 
-    // private String[] parsePlan(String plan) {
-    //     return plan.split("\n");
-    // }
+    private String[] parsePlan(String plan) {
+        return plan.split(" -> ");
+    }
 
-    // private void execute(Player player, String step) {
-    //     String[] couple = step.split("<->");
-    // }
+    private void execute(Player player, String step) {
+        String[] couple = step.split("[(,)]");
+        int newx = Integer.valueOf(couple[1]);
+        int newy = Integer.valueOf(couple[2]);
+        player.moveTo(player.getxPos(), player.getyPos(), newx, newy);
+        player.setxPos(newx);
+        player.setyPos(newy);
+    }
 
     @Override
     public void displayOutput(AsciiPanel terminal) {
@@ -96,6 +105,12 @@ public class WorldScreen implements Screen {
                     player.moveTo(xPos, yPos, xPos, yPos + 1);
                     player.setxPos(xPos);
                     player.setyPos(yPos + 1);
+                }
+                break;
+            case 0x20:
+                if(i < this.mazeSteps.length){
+                    this.execute(player, mazeSteps[i]);
+                    i++;
                 }
                 break;
             default:

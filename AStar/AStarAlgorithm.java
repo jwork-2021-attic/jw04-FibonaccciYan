@@ -1,52 +1,15 @@
-//package AStar;
+package AStar;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Stack;
 
 public class AStarAlgorithm {
 
+    public String plan;
     private static final int[][] DIREC = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("please enter (rows cols x1 y1 x2 y2): ");
-        final int rows = scanner.nextInt();
-        final int cols = scanner.nextInt();
-        int x1 = scanner.nextInt();
-        int y1 = scanner.nextInt();
-        int x2 = scanner.nextInt();
-        int y2 = scanner.nextInt();
-        scanner.close();
-
-        // generate a two-dimension array filled with 0
-        int map[][] = new int[rows][cols];
-        for (int i = 0; i < rows; i++) {
-            int tmp[] = new int[cols];
-            Arrays.fill(tmp, 0);
-            map[i] = tmp;
-        }
-        int midr = rows / 2;
-        int midc = cols / 2;
-        /*map[midr - 1][midc] = 1;
-        map[midr][midc] = 1;
-        map[midr + 1][midc] = 1;*/
-
-        for (int i = 1; i < rows - 1; i++) {
-            map[i][midc] = 1;
-        }
-        map[2][6] = 1;
-        map[3][6] = 1;
-        map[4][6] = 1;
-        map[5][6] = 1;
-
-
-        findPath(map, x1, y1, x2, y2);
-    }
-
-    private static void findPath(int[][] map, int x1, int y1, int x2, int y2) {
+    public void findPath(int[][] map, int x1, int y1, int x2, int y2) {
         List<Position> openList = new ArrayList<AStarAlgorithm.Position>();
         List<Position> closeList = new ArrayList<AStarAlgorithm.Position>();
         boolean findFlag = false;
@@ -66,7 +29,7 @@ public class AStarAlgorithm {
             closeList.add(currentPos);
             openList.remove(currentPos);
 
-            //遍历当前点对应的8个相邻点
+            //遍历当前点对应的4个相邻点
             for (int i = 0; i < DIREC.length; i++) {
                 int tmpX = currentPos.row + DIREC[i][0];
                 int tmpY = currentPos.col + DIREC[i][1];
@@ -75,8 +38,8 @@ public class AStarAlgorithm {
                 }
                 //创建对应的点
                 Position tmpPos = new Position(tmpX, tmpY, calcH(tmpX, tmpY, x2, y2), currentPos);
-                //map中对应的格子中的值为1（障碍）， 或对应的点已经在关闭列表中
-                if (map[tmpX][tmpY] == 1 || closeList.contains(tmpPos)) {
+                //map中对应的格子中的值为0（障碍）， 或对应的点已经在关闭列表中
+                if (map[tmpX][tmpY] == 0 || closeList.contains(tmpPos)) {
                     continue;
                 }
                 //如果不在开启列表中，则加入到开启列表
@@ -108,12 +71,11 @@ public class AStarAlgorithm {
         } while(openList.size() != 0);
 
         if(!findFlag) {
-            System.out.println("no valid path!");
-            return;
+            plan = null;
         }
 
         Stack<String> resStack = new Stack<String>();
-        String pattern = "(%d, %d)";
+        String pattern = "(%d,%d)";
         if (termPos != null) {
             resStack.push(String.format(pattern, termPos.row, termPos.col));
             while(termPos.fa != null) {
@@ -128,7 +90,11 @@ public class AStarAlgorithm {
                 sb.append(" -> ");
             }
         }
-        System.out.println(sb.toString());
+        plan = sb.toString();
+    }
+
+    public String getPlan(){
+        return plan;
     }
 
     /**
@@ -174,9 +140,8 @@ public class AStarAlgorithm {
          * @return
          */
         private int calcG() {
-            if (fa == null) return 0;
-            if (fa.row != this.row && fa.col !=  this.col) {
-                return 14 + fa.G;
+            if (fa == null) {
+                return 0;
             }
             return 10 + fa.G;
         } 
