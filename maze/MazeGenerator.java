@@ -27,6 +27,7 @@ public class MazeGenerator {
                 randomlyAddNodesToStack(neighbors);
             }
         }
+        maze[dimension - 1][dimension - 1] = 1;
     }
 
     public String getRawMaze() {

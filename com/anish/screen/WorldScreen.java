@@ -15,7 +15,7 @@ import AStar.AStarAlgorithm;
 
 public class WorldScreen implements Screen {
 
-    public static final int SIZE = 20;
+    public static final int SIZE = 40;
 
     private World world;
     private Player player;
@@ -81,7 +81,7 @@ public class WorldScreen implements Screen {
         }
         Thing t = world.get(x, y);
         if(couple[0].equals("addOpenList")){
-            t.setColor(AsciiPanel.green);
+            t.setColor(AsciiPanel.brightGreen);
             t.setGlyph((char)235);
         }else if(couple[0].equals("addCloseList")){
             t.setColor(AsciiPanel.brightBlue);
