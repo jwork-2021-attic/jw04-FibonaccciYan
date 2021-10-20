@@ -26,16 +26,24 @@ public class Thing {
         this.world = world;
     }
 
-    private final Color color;
+    private Color color;
 
     public Color getColor() {
         return this.color;
     }
 
-    private final char glyph;
+    public void setColor(Color color){
+        this.color = color;
+    }
+
+    private char glyph;
 
     public char getGlyph() {
         return this.glyph;
+    }
+
+    public void setGlyph(char glyph){
+        this.glyph = glyph;
     }
 
 }

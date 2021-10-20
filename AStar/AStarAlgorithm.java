@@ -7,6 +7,7 @@ import java.util.Stack;
 public class AStarAlgorithm {
 
     public String plan;
+    public String process = "";
     private static final int[][] DIREC = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 
     public void findPath(int[][] map, int x1, int y1, int x2, int y2) {
@@ -14,9 +15,11 @@ public class AStarAlgorithm {
         List<Position> closeList = new ArrayList<AStarAlgorithm.Position>();
         boolean findFlag = false;
         Position termPos = null;
+        String pattern = "(%d,%d)";
         // 起始点
         Position startPos = new Position(x1, y1, calcH(x1, y1, x2, y2));
         openList.add(startPos);
+        process += "addOpenList:" + String.format(pattern, startPos.row, startPos.col) + "\n";
         do {
             // 通过在开启列表中找到F值最小的点作为当前点
             Position currentPos = openList.get(0);
@@ -27,7 +30,9 @@ public class AStarAlgorithm {
             }
             // 将找到的当前点放到关闭列表中，并从开启列表中删除
             closeList.add(currentPos);
+            process += "addCloseList:" + String.format(pattern, currentPos.row, currentPos.col) + "\n";
             openList.remove(currentPos);
+            // process += "removeOpenList:" + String.format(pattern, currentPos.row, currentPos.col) + "\n";
 
             //遍历当前点对应的4个相邻点
             for (int i = 0; i < DIREC.length; i++) {
@@ -45,6 +50,7 @@ public class AStarAlgorithm {
                 //如果不在开启列表中，则加入到开启列表
                 if (!openList.contains(tmpPos)) {
                     openList.add(tmpPos);
+                    process += "addOpenList:" + String.format(pattern, tmpPos.row, tmpPos.col) + "\n";
                 } else {
                     // 如果已经存在开启列表中，则用G值考察新的路径是否更好，如果该路径更好，则把父节点改成当前格并从新计算FGH
                     Position prePos = null;
@@ -68,14 +74,13 @@ public class AStarAlgorithm {
                 }
             }
 
-        } while(openList.size() != 0);
+        } while(openList.size() != 0 && findFlag == false);
 
         if(!findFlag) {
             plan = null;
         }
 
         Stack<String> resStack = new Stack<String>();
-        String pattern = "(%d,%d)";
         if (termPos != null) {
             resStack.push(String.format(pattern, termPos.row, termPos.col));
             while(termPos.fa != null) {
@@ -95,6 +100,10 @@ public class AStarAlgorithm {
 
     public String getPlan(){
         return plan;
+    }
+
+    public String getProcess(){
+        return process;
     }
 
     /**

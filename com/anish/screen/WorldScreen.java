@@ -3,6 +3,7 @@ package com.anish.screen;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 
+import com.anish.world.Thing;
 import com.anish.world.Player;
 import com.anish.world.World;
 import com.anish.world.Wall;
@@ -14,12 +15,13 @@ import AStar.AStarAlgorithm;
 
 public class WorldScreen implements Screen {
 
-    public static final int SIZE = 40;
+    public static final int SIZE = 20;
 
     private World world;
     private Player player;
     private int[][] maze;
     String[] mazeSteps;
+    String[] visualSteps;
 
     public WorldScreen() {
         world = new World();
@@ -41,6 +43,9 @@ public class WorldScreen implements Screen {
         AStarAlgorithm aStar = new AStarAlgorithm();
         aStar.findPath(maze, player.getxPos(), player.getyPos(), SIZE - 1, SIZE - 1);
         mazeSteps = this.parsePlan(aStar.getPlan());
+
+        System.out.println(aStar.getProcess());
+        visualSteps = this.parseProcess(aStar.getProcess());
     } 
 
     private boolean isValidMove(int xPos, int yPos){
@@ -54,6 +59,10 @@ public class WorldScreen implements Screen {
         return plan.split(" -> ");
     }
 
+    private String[] parseProcess(String process){
+        return process.split("\n");
+    }
+
     private void execute(Player player, String step) {
         String[] couple = step.split("[(,)]");
         int newx = Integer.valueOf(couple[1]);
@@ -61,6 +70,24 @@ public class WorldScreen implements Screen {
         player.moveTo(player.getxPos(), player.getyPos(), newx, newy);
         player.setxPos(newx);
         player.setyPos(newy);
+    }
+
+    private void visualize(String step){
+        String[] couple = step.split("[:(,)]");
+        int x = Integer.parseInt(couple[2]);
+        int y = Integer.parseInt(couple[3]);
+        if(x == 0 && y == 0){
+            return;
+        }
+        Thing t = world.get(x, y);
+        if(couple[0].equals("addOpenList")){
+            t.setColor(AsciiPanel.green);
+            t.setGlyph((char)235);
+        }else if(couple[0].equals("addCloseList")){
+            t.setColor(AsciiPanel.brightBlue);
+            t.setGlyph((char)235);
+        }
+        world.put(t, x, y);
     }
 
     @Override
@@ -73,6 +100,7 @@ public class WorldScreen implements Screen {
     }
 
     int i = 0;
+    int j = 0;
 
     @Override
     public Screen respondToUserInput(KeyEvent key) {
@@ -108,9 +136,12 @@ public class WorldScreen implements Screen {
                 }
                 break;
             case 0x20:
-                if(i < this.mazeSteps.length){
-                    this.execute(player, mazeSteps[i]);
+                if(i < this.visualSteps.length){
+                    this.visualize(visualSteps[i]);
                     i++;
+                }else if(j < this.mazeSteps.length){
+                    this.execute(player, mazeSteps[j]);
+                    j++;
                 }
                 break;
             default:
